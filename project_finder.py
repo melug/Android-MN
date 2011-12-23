@@ -17,21 +17,24 @@ def find_projects(dr):
                     yield project
 
 def extract_string_resource(project_dir):
+    words = list()
     strings_filepath = os.path.join(project_dir, 'res/values/strings.xml')
     with open(strings_filepath, 'r') as f:
         text = f.read()
     tree = etree.fromstring(text)
     for string_tag in tree.xpath('/resources/string'):
-        print '+-', string_tag.attrib['name'], string_tag.text
+        words.append(string_tag.attrib['name'])
+    print 'Word count:', len(words)
+    return words
 
 if __name__ == '__main__':
+    total_words = list()
     if len(sys.argv) == 2:
         for project_path in find_projects(sys.argv[1]):
             print 'Found project at:', project_path
-            print '|'
             try:
-                extract_string_resource(project_path)
+                total_words += extract_string_resource(project_path)
             except:
                 pass
-            print '+' + '-'*140
+    print 'Totally: (', len(total_words), ') found'
     
